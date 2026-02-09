@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [
   {
     id: 118836,
@@ -20,5 +22,66 @@ const initialFriends = [
 ];
 
 export default function App() {
-  return <div>Hello!</div>
+  const [friends, setFriends] = useState(initialFriends);
+  const [showAddFriend, setShowAddFriend] = useState(true);
+  return <div className="app">
+    <div className="sidebar">
+      <FriendsList friends={friends} />
+      {showAddFriend && <FormAddFriend onSubmit={setFriends} />}
+      <Button onClick={() => setShowAddFriend(show => !show)}>{showAddFriend ? 'Close' : 'Add friend'}</Button>
+    </div>
+    <FormSplitBill />
+  </div >
+}
+
+function FriendsList({ friends }) {
+  return <ul className="">
+    {friends.map(friend =>
+      <li key={friend.id}>
+        <img src={friend.image} alt={friend.name} />
+        <h3>{friend.name}</h3>
+        {friend.balance < 0 && <p className="red">You own {friend.name} ${Math.abs(friend.balance)}</p>}
+        {friend.balance > 0 && <p className="green">{friend.name} ows you ${friend.balance}</p>}
+        {friend.balance === 0 && <p>You and {friend.name} are even</p>}
+        <Button>Select</Button>
+      </li>)}
+  </ul>
+}
+
+function FormAddFriend({ onSubmit }) {
+  return <form className="form-add-friend">
+    <label htmlFor="friend-name">👯 Friend name</label>
+    <input type="text" title="friend-name" name="friend-name" />
+
+    <label htmlFor="friend-img">💁‍♀️ Image url</label>
+    <input type="text" title="friend-img" name="friend-img" />
+
+    <Button>Add</Button>
+
+  </form>
+}
+
+function FormSplitBill() {
+  return <form className="form-split-bill">
+    <h2>Split a bill with your friend</h2>
+
+    <label htmlFor="bill-amount">💸 Bill value</label>
+    <input type="text" title="bill-amount" name="bill-amount" />
+
+    <label htmlFor="expense-user">🐣 Your expense</label>
+    <input type="text" title="expense-user" name="expense-user" />
+
+    <label htmlFor="expense-friend">🤠 Your friend's expense</label>
+    <input type="text" title="expense-friend" name="expense-friend" disabled />
+
+    <label htmlFor="who-pays">🦉 Who is paying the bill</label>
+    <select title="who-pays" name="who-pays">
+      <option value="user">You</option>
+      <option value="friend">Your friend</option>
+    </select>
+  </form>
+}
+
+function Button({ onClick, children }) {
+  return <button onClick={onClick} className="button">{children}</button>
 }
